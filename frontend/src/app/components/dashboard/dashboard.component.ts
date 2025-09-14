@@ -72,12 +72,12 @@ import { CheckIn } from '../../models/checkin.model';
               <div class="mb-3">
                 <div class="d-flex justify-content-between mb-1">
                   <small class="text-muted">Progress</small>
-                  <small class="text-muted">{{ goal.daysCompleted }}/{{ goal.daysCompleted + goal.daysRemaining }} days</small>
+                  <small class="text-muted">{{ goal.daysCompleted || 0 }}/{{ (goal.daysCompleted || 0) + (goal.daysRemaining || 0) }} days</small>
                 </div>
                 <div class="progress">
-                  <div class="progress-bar" [style.width.%]="goal.progressPercentage"></div>
+                  <div class="progress-bar" [style.width.%]="goal.progressPercentage || 0"></div>
                 </div>
-                <small class="text-muted">{{ goal.progressPercentage | number:'1.1-1' }}% complete</small>
+                <small class="text-muted">{{ (goal.progressPercentage || 0) | number:'1.1-1' }}% complete</small>
               </div>
 
               <div class="d-flex justify-content-between align-items-center">

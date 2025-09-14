@@ -161,12 +161,12 @@ import { CheckIn } from '../../models/checkin.model';
               <div class="mb-3">
                 <div class="d-flex justify-content-between mb-1">
                   <small class="text-muted">Progress</small>
-                  <small class="text-muted">{{ selectedGoal.daysCompleted }}/{{ selectedGoal.daysCompleted + selectedGoal.daysRemaining }} days</small>
+                  <small class="text-muted">{{ selectedGoal.daysCompleted || 0 }}/{{ (selectedGoal.daysCompleted || 0) + (selectedGoal.daysRemaining || 0) }} days</small>
                 </div>
                 <div class="progress">
-                  <div class="progress-bar" [style.width.%]="selectedGoal.progressPercentage"></div>
+                  <div class="progress-bar" [style.width.%]="selectedGoal.progressPercentage || 0"></div>
                 </div>
-                <small class="text-muted">{{ selectedGoal.progressPercentage | number:'1.1-1' }}% complete</small>
+                <small class="text-muted">{{ (selectedGoal.progressPercentage || 0) | number:'1.1-1' }}% complete</small>
               </div>
 
               <div class="mb-3">
