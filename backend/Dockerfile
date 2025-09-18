@@ -8,6 +8,7 @@ WORKDIR /app
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
+COPY .mvn/wrapper/maven-wrapper.jar .mvn/wrapper/
 
 # Make Maven wrapper executable
 RUN chmod +x ./mvnw
