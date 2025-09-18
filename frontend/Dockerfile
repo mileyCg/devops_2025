@@ -9,6 +9,8 @@ COPY package*.json ./
 
 # Install dependencies (including dev dependencies needed for build)
 RUN npm ci
+RUN npm install -g @angular/cli
+RUN npm rebuild
 
 # Copy source code
 COPY . .
