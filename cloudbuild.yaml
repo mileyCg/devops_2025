@@ -1,0 +1,16 @@
+steps:
+  # Build Backend Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/goal-tracker-backend', './backend']
+
+  # Build Frontend Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/goal-tracker-frontend', './frontend']
+
+  # Push Backend Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/goal-tracker-backend']
+
+  # Push Frontend Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/goal-tracker-frontend']
