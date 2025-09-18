@@ -23,7 +23,7 @@ COPY src ./src
 RUN ./mvnw clean package -DskipTests
 
 # Create a new stage for runtime
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre-alpine
 
 # Set working directory
 WORKDIR /app
