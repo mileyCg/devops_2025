@@ -1,5 +1,3 @@
-DEVOPS Project from Danusika and Miley
-
 # Goal Tracker - 30-Day Goal Tracking Application
 
 A full-stack web application for tracking 30-day goals with daily check-ins. Built with Angular frontend, Java Spring Boot backend, H2 database, and Docker support.
