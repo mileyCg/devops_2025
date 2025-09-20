@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      serviceAccountName: goal-tracker-ksa
+      containers:
+      - name: goal-tracker-frontend-sha256-1
+        image: gcr.io/rosy-slate-468308-r5/goal-tracker-frontend@sha256:bc6f403df2159a37805d4a0c6e06386c360263e00518b218cde8a356b08c42d2
+        ports:
+        - containerPort: 80

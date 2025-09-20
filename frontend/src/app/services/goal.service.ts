@@ -7,7 +7,7 @@ import { Goal, CreateGoalRequest } from '../models/goal.model';
   providedIn: 'root'
 })
 export class GoalService {
-  private apiUrl = 'http://localhost:8080/api/goals';
+  private apiUrl = 'http://backend/api/goals';
 
   constructor(private http: HttpClient) { }
 
