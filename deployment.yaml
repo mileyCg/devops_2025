@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-2
+  labels:
+    backend: deployment-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      backend: deployment-2
+  template:
+    metadata:
+      labels:
+        backend: deployment-2
+    spec:
+      serviceAccountName: goal-tracker-ksa
+      containers:
+      - name: goal-tracker-backend-sha256-1
+        image: gcr.io/rosy-slate-468308-r5/goal-tracker-backend:latest
+        ports:
+        - containerPort: 8080
+      - name: cloud-sql-proxy
+        image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.1.0
+        args:
+          - "--structured-logs"
+          - "--port=3306"
+          - "rosy-slate-468308-r5:us-central1:devops2025"
+        securityContext:
+          runAsUser: 0
