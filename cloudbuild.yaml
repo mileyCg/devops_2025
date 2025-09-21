@@ -12,7 +12,7 @@ steps:
   args:
   - '-c'
   - |
-    gcloud container clusters get-credentials devops2025 --region us-central1 --project $PROJECT_ID
+    gcloud container clusters get-credentials devops --region us-central1-a --project $PROJECT_ID
 - name: 'gcr.io/cloud-builders/kubectl'
   args: ['set', 'image', 'deployment/backend', 'goal-tracker-backend-sha256-1=gcr.io/$PROJECT_ID/goal-tracker-backend:$SHORT_SHA']
 - name: 'gcr.io/cloud-builders/kubectl'
