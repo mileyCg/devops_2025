@@ -38,6 +38,13 @@ steps:
   args:
   - '-c'
   - |
+    /workspace/kustomize edit set namespace $BRANCH_NAME
+  dir: 'k8s/overlays/ephemeral'
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
     /workspace/kustomize edit set image gcr.io/$PROJECT_ID/goal-tracker-backend=gcr.io/$PROJECT_ID/goal-tracker-backend:$BRANCH_NAME gcr.io/$PROJECT_ID/goal-tracker-frontend=gcr.io/$PROJECT_ID/goal-tracker-frontend:$BRANCH_NAME
   dir: 'k8s/overlays/ephemeral'
 - name: 'gcr.io/cloud-builders/gcloud'

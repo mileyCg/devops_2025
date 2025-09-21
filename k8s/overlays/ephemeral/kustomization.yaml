@@ -4,5 +4,3 @@ bases:
   - ../../base
 
 namePrefix: ephemeral-
-
-namespace: ephemeral-ns
