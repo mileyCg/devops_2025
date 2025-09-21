@@ -11,7 +11,13 @@ steps:
 
 # Create namespace
 - name: 'gcr.io/cloud-builders/kubectl'
-  args: ['create', 'namespace', '$BRANCH_NAME']
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    echo "apiVersion: v1\nkind: Namespace\nmetadata:\n  name: $BRANCH_NAME" > namespace.yaml
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['apply', '-f', 'namespace.yaml']
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=devops'
