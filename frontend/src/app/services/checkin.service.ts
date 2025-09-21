@@ -7,7 +7,7 @@ import { CheckIn, CreateCheckInRequest } from '../models/checkin.model';
   providedIn: 'root'
 })
 export class CheckInService {
-  private apiUrl = 'http://backend/api/checkins';
+  private apiUrl = '/api/checkins';
 
   constructor(private http: HttpClient) { }
 
