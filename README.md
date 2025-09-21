@@ -1,4 +1,4 @@
-Testing 2
+Testing
 
 # Goal Tracker - 30-Day Goal Tracking Application
 
