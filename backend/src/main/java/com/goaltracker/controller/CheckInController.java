@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/checkins")
-@CrossOrigin(origins = {"http://localhost:4200", "http://frontend-service:80", "http://frontend-service.default.svc.cluster.local:80"})
+@CrossOrigin(origins = {"http://localhost:4200", "http://34.60.163.229:80", "http://frontend-service:80", "http://frontend-service.default.svc.cluster.local:80"})
 public class CheckInController {
     
     @Autowired
