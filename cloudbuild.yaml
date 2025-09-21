@@ -7,16 +7,16 @@ steps:
   args: ['push', 'gcr.io/$PROJECT_ID/goal-tracker-backend:$SHORT_SHA']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/goal-tracker-frontend:$SHORT_SHA']
-- name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: 'bash'
-  args:
-  - '-c'
-  - |
-    gcloud container clusters get-credentials devops --region us-central1-a --project $PROJECT_ID
 - name: 'gcr.io/cloud-builders/kubectl'
   args: ['set', 'image', 'deployment/backend', 'goal-tracker-backend-sha256-1=gcr.io/$PROJECT_ID/goal-tracker-backend:$SHORT_SHA']
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=devops'
 - name: 'gcr.io/cloud-builders/kubectl'
   args: ['set', 'image', 'deployment/frontend', 'goal-tracker-frontend-sha256-1=gcr.io/$PROJECT_ID/goal-tracker-frontend:$SHORT_SHA']
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=devops'
 images:
 - 'gcr.io/$PROJECT_ID/goal-tracker-backend:$SHORT_SHA'
 - 'gcr.io/$PROJECT_ID/goal-tracker-frontend:$SHORT_SHA'
