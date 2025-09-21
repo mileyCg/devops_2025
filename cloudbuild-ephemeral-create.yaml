@@ -48,7 +48,7 @@ steps:
     /workspace/kustomize build . -o ../../k8s-manifests.yaml
   dir: 'k8s/overlays/ephemeral'
 - name: 'gcr.io/cloud-builders/kubectl'
-  args: ['apply', '-f', 'k8s-manifests.yaml']
+  args: ['apply', '-f', '/workspace/k8s-manifests.yaml']
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=devops'
