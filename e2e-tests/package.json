@@ -1,0 +1,14 @@
+{
+  "name": "goal-tracker-e2e-tests",
+  "version": "1.0.0",
+  "description": "End-to-end tests for Goal Tracker application",
+  "scripts": {
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open",
+    "test:load": "artillery run load-test.yml"
+  },
+  "devDependencies": {
+    "cypress": "^13.0.0",
+    "artillery": "^2.0.0"
+  }
+}

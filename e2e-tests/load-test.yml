@@ -1,0 +1,46 @@
+config:
+  target: 'http://34.60.163.229:80'
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm up"
+    - duration: 120
+      arrivalRate: 10
+      name: "Ramp up load"
+    - duration: 300
+      arrivalRate: 20
+      name: "Sustained load"
+    - duration: 60
+      arrivalRate: 5
+      name: "Ramp down"
+
+scenarios:
+  - name: "Goal Management Workflow"
+    weight: 70
+    flow:
+      - get:
+          url: "/"
+      - get:
+          url: "/api/goals"
+      - post:
+          url: "/api/goals"
+          json:
+            title: "Load Test Goal {{ $randomString() }}"
+            description: "Goal created during load test"
+            startDate: "2024-01-01"
+            endDate: "2024-01-31"
+      - get:
+          url: "/api/goals/active"
+
+  - name: "Check-in Workflow"
+    weight: 30
+    flow:
+      - get:
+          url: "/api/goals/active"
+      - post:
+          url: "/api/checkins"
+          json:
+            goalId: 1
+            checkInDate: "2024-01-15"
+            notes: "Load test check-in"
+            mood: 4
