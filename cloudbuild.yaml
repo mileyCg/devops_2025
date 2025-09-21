@@ -1,19 +1,19 @@
 steps:
   # Build Backend Docker Image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/goal-tracker-backend', './backend']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/goal-tracker-backend:$SHORT_SHA', './backend']
 
   # Build Frontend Docker Image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/goal-tracker-frontend', './frontend']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/goal-tracker-frontend:$SHORT_SHA', './frontend']
 
   # Push Backend Docker Image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/goal-tracker-backend']
+    args: ['push', 'gcr.io/$PROJECT_ID/goal-tracker-backend:$SHORT_SHA']
 
   # Push Frontend Docker Image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/goal-tracker-frontend']
+    args: ['push', 'gcr.io/$PROJECT_ID/goal-tracker-frontend:$SHORT_SHA']
 
 options:
   logging: CLOUD_LOGGING_ONLY
