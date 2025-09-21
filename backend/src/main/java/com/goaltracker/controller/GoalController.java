@@ -20,6 +20,11 @@ public class GoalController {
     @Autowired
     private GoalService goalService;
     
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        return ResponseEntity.ok("Backend is running!");
+    }
+    
     @GetMapping
     public ResponseEntity<List<GoalDto>> getAllGoals() {
         List<GoalDto> goals = goalService.getAllGoals();
