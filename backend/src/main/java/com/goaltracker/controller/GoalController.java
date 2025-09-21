@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/goals")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://frontend-service:80", "http://frontend-service.default.svc.cluster.local:80"})
 public class GoalController {
     
     @Autowired
