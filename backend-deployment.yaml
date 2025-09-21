@@ -17,7 +17,8 @@ spec:
       serviceAccountName: goal-tracker-ksa
       containers:
       - name: goal-tracker-backend-sha256-1
-        image: gcr.io/rosy-slate-468308-r5/goal-tracker-backend:bd1631d
+        image: gcr.io/rosy-slate-468308-r5/goal-tracker-backend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
       - name: cloud-sql-proxy
