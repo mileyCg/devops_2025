@@ -16,6 +16,7 @@ export class GoalService {
   }
 
   getActiveGoals(): Observable<Goal[]> {
+    console.log('Making request to:', `${this.apiUrl}/active`);
     return this.http.get<Goal[]>(`${this.apiUrl}/active`);
   }
 
