@@ -47,6 +47,12 @@ steps:
   - |
     /workspace/kustomize build . -o ../../k8s-manifests.yaml
   dir: 'k8s/overlays/ephemeral'
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    ls -laR /workspace
 - name: 'gcr.io/cloud-builders/kubectl'
   args: ['apply', '-f', '/workspace/k8s-manifests.yaml']
   env:
