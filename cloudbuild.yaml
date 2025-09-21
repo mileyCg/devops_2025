@@ -57,6 +57,24 @@ steps:
       - '--cluster=goal-tracker-production'
     condition: '$BRANCH_NAME == "main"'
 
+  # Print deployment info
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "=== DEPLOYMENT INFO ==="
+        echo "Branch: $BRANCH_NAME"
+        echo "Commit: $SHORT_SHA"
+        if [ "$BRANCH_NAME" = "main" ]; then
+          echo "Environment: PRODUCTION"
+          echo "Cluster: goal-tracker-production"
+        else
+          echo "Environment: STAGING"
+          echo "Cluster: goal-tracker-staging"
+        fi
+        echo "========================"
+
   # Run E2E Tests (after deployment)
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
