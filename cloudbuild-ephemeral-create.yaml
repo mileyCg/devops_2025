@@ -15,7 +15,7 @@ steps:
   args:
   - '-c'
   - |
-    echo "apiVersion: v1\nkind: Namespace\nmetadata:\n  name: $BRANCH_NAME" > namespace.yaml
+    echo -e "apiVersion: v1\nkind: Namespace\nmetadata:\n  name: $BRANCH_NAME" > namespace.yaml
 - name: 'gcr.io/cloud-builders/kubectl'
   args: ['apply', '-f', 'namespace.yaml']
   env:
