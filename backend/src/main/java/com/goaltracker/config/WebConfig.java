@@ -14,7 +14,13 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://34.60.163.229", "http://localhost:4200")
+                        .allowedOrigins(
+                            "http://34.60.163.229",
+                            "http://localhost:4200",
+                            "http://34.60.163.229:80",
+                            "http://frontend-service:80",
+                            "http://frontend-service.default.svc.cluster.local:80"
+                        )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
