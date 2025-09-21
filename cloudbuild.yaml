@@ -1,19 +1,24 @@
 steps:
-  # Build Backend Docker Image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/goal-tracker-backend:latest', './backend']
-
-  # Build Frontend Docker Image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/goal-tracker-frontend:latest', './frontend']
-
-  # Push Backend Docker Image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/goal-tracker-backend:latest']
-
-  # Push Frontend Docker Image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/goal-tracker-frontend:latest']
-
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/goal-tracker-backend:$SHORT_SHA', './backend']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/goal-tracker-frontend:$SHORT_SHA', './frontend']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/goal-tracker-backend:$SHORT_SHA']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/goal-tracker-frontend:$SHORT_SHA']
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    gcloud container clusters get-credentials devops2025 --region us-central1 --project $PROJECT_ID
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['set', 'image', 'deployment/backend', 'goal-tracker-backend-sha256-1=gcr.io/$PROJECT_ID/goal-tracker-backend:$SHORT_SHA']
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['set', 'image', 'deployment/frontend', 'goal-tracker-frontend-sha256-1=gcr.io/$PROJECT_ID/goal-tracker-frontend:$SHORT_SHA']
+images:
+- 'gcr.io/$PROJECT_ID/goal-tracker-backend:$SHORT_SHA'
+- 'gcr.io/$PROJECT_ID/goal-tracker-frontend:$SHORT_SHA'
 options:
   logging: CLOUD_LOGGING_ONLY
