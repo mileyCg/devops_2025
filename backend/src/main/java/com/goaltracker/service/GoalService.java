@@ -93,7 +93,7 @@ public class GoalService {
         dto.setDescription(goal.getDescription());
         dto.setStartDate(goal.getStartDate());
         dto.setEndDate(goal.getEndDate());
-        dto.setActive(goal.isActive());
+        dto.setIsActive(goal.isActive());
         dto.setDaysRemaining(goal.getDaysRemaining());
         dto.setDaysCompleted(goal.getDaysCompleted());
         dto.setProgressPercentage(goal.getProgressPercentage());
