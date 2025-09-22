@@ -22,8 +22,9 @@ on:
         type: string
 
 env:
-  REGISTRY: gcr.io
+  REGISTRY: us-docker.pkg.dev
   IMAGE_NAME: ${{ secrets.GCP_PROJECT_ID }}
+  REPOSITORY: goal-tracker
 
 jobs:
   test:
@@ -97,24 +98,24 @@ jobs:
       with:
         version: 'latest'
         
-    - name: Configure Docker for GCR
-      run: gcloud auth configure-docker
+    - name: Configure Docker for Artifact Registry
+      run: gcloud auth configure-docker us-docker.pkg.dev
       
     - name: Build and push backend image
       run: |
         cd backend
-        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-backend:${{ github.sha }} .
-        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-backend:latest .
-        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-backend:${{ github.sha }}
-        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-backend:latest
+        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.REPOSITORY }}/goal-tracker-backend:${{ github.sha }} .
+        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.REPOSITORY }}/goal-tracker-backend:latest .
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.REPOSITORY }}/goal-tracker-backend:${{ github.sha }}
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.REPOSITORY }}/goal-tracker-backend:latest
         
     - name: Build and push frontend image
       run: |
         cd frontend
-        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-frontend:${{ github.sha }} .
-        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-frontend:latest .
-        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-frontend:${{ github.sha }}
-        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-frontend:latest
+        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.REPOSITORY }}/goal-tracker-frontend:${{ github.sha }} .
+        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.REPOSITORY }}/goal-tracker-frontend:latest .
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.REPOSITORY }}/goal-tracker-frontend:${{ github.sha }}
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.REPOSITORY }}/goal-tracker-frontend:latest
         
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
@@ -155,12 +156,12 @@ jobs:
         
         # Deploy backend
         kubectl apply -f k8s/backend-deployment.yaml -n $ENV
-        kubectl set image deployment/goal-tracker-backend backend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-backend:${{ github.sha }} -n $ENV
+        kubectl set image deployment/goal-tracker-backend backend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.REPOSITORY }}/goal-tracker-backend:${{ github.sha }} -n $ENV
         kubectl scale deployment goal-tracker-backend --replicas=$REPLICAS -n $ENV
         
         # Deploy frontend
         kubectl apply -f k8s/frontend-deployment.yaml -n $ENV
-        kubectl set image deployment/goal-tracker-frontend frontend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-frontend:${{ github.sha }} -n $ENV
+        kubectl set image deployment/goal-tracker-frontend frontend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.REPOSITORY }}/goal-tracker-frontend:${{ github.sha }} -n $ENV
         kubectl scale deployment goal-tracker-frontend --replicas=$REPLICAS -n $ENV
         
         # Wait for rollout
