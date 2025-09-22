@@ -177,6 +177,10 @@ jobs:
         kubectl get pods -n $ENV -l app=goal-tracker-frontend
         kubectl describe pods -n $ENV -l app=goal-tracker-frontend | tail -20
         
+        # Check frontend container logs
+        echo "📋 Frontend container logs:"
+        kubectl logs -n $ENV -l app=goal-tracker-frontend --tail=20 || echo "No logs available yet"
+        
         kubectl rollout status deployment/goal-tracker-frontend -n $ENV --timeout=300s
         
         echo "✅ Deployment to $ENV complete!"
