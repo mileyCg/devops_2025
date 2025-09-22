@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: goal-tracker-backend
+  name: backend
   # namespace will be set via kubectl -n flag
 spec:
   replicas: 1
@@ -12,11 +12,11 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: goal-tracker-backend
+      app: backend
   template:
     metadata:
       labels:
-        app: goal-tracker-backend
+        app: backend
     spec:
       serviceAccountName: goal-tracker-ksa
       containers:
@@ -53,7 +53,7 @@ metadata:
   # namespace will be set via kubectl -n flag
 spec:
   selector:
-    app: goal-tracker-backend
+    app: backend
   ports:
   - port: 80
     targetPort: 8080
