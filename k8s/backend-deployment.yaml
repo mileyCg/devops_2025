@@ -37,7 +37,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: goal-tracker-backend-service
+  name: backend
   # namespace will be set via kubectl -n flag
 spec:
   selector:
