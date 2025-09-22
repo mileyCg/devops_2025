@@ -33,6 +33,17 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "300m"
+      - name: cloud-sql-proxy
+        image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0
+        args:
+          - "--port=3306"
+          - "rosy-slate-468308-r5:us-central1:devops2025"
+        securityContext:
+          runAsNonRoot: true
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
 ---
 apiVersion: v1
 kind: Service
