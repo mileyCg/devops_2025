@@ -24,7 +24,7 @@ on:
 env:
   REGISTRY: us-docker.pkg.dev
   IMAGE_NAME: ${{ secrets.GCP_PROJECT_ID }}
-  REPOSITORY: goal-tracker
+  REPOSITORY: gcr.io
 
 jobs:
   test:
