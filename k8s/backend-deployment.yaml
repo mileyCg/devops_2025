@@ -12,7 +12,7 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: goal-tracker-backend
+      app: backend
   template:
     metadata:
       labels:
