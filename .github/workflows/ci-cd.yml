@@ -181,6 +181,27 @@ jobs:
         echo "📋 Frontend container logs:"
         kubectl logs -n $ENV -l app=goal-tracker-frontend --tail=20 || echo "No logs available yet"
         
+        # Wait a bit for container to start
+        echo "⏳ Waiting for frontend container to start..."
+        sleep 15
+        kubectl get pods -n $ENV -l app=goal-tracker-frontend
+        
+        # Get detailed pod information
+        echo "🔍 Detailed pod status:"
+        kubectl describe pods -n $ENV -l app=goal-tracker-frontend
+        
+        # Try to get logs again
+        echo "📋 Frontend container logs (after wait):"
+        kubectl logs -n $ENV -l app=goal-tracker-frontend --tail=20 || echo "Still no logs available"
+        
+        # Get backend logs too
+        echo "📋 Backend container logs:"
+        kubectl logs -n $ENV -l app=goal-tracker-backend --tail=20 || echo "No backend logs available"
+        
+        # Check if there are any events
+        echo "📅 Recent events:"
+        kubectl get events -n $ENV --sort-by='.lastTimestamp' | tail -10
+        
         kubectl rollout status deployment/goal-tracker-frontend -n $ENV --timeout=300s
         
         echo "✅ Deployment to $ENV complete!"
