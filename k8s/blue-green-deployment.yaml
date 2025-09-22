@@ -1,0 +1,62 @@
+# Blue Environment (Current Production)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goal-tracker-blue
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: goal-tracker
+      environment: blue
+  template:
+    metadata:
+      labels:
+        app: goal-tracker
+        environment: blue
+    spec:
+      containers:
+      - name: frontend
+        image: gcr.io/PROJECT_ID/goal-tracker-frontend:v1.0.0
+        ports:
+        - containerPort: 80
+---
+# Green Environment (New Version)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goal-tracker-green
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: goal-tracker
+      environment: green
+  template:
+    metadata:
+      labels:
+        app: goal-tracker
+        environment: green
+    spec:
+      containers:
+      - name: frontend
+        image: gcr.io/PROJECT_ID/goal-tracker-frontend:v2.0.0
+        ports:
+        - containerPort: 80
+---
+# Service that can switch between blue and green
+apiVersion: v1
+kind: Service
+metadata:
+  name: goal-tracker-service
+  namespace: production
+spec:
+  selector:
+    app: goal-tracker
+    environment: blue  # Change this to 'green' to switch
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer

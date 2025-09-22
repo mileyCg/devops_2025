@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goal-tracker-frontend
+  # namespace will be set via kubectl -n flag
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: goal-tracker-frontend
+  template:
+    metadata:
+      labels:
+        app: goal-tracker-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: us-docker.pkg.dev/rosy-slate-468308-r5/gcr.io/frontend:latest
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goal-tracker-frontend-service
+  # namespace will be set via kubectl -n flag
+spec:
+  selector:
+    app: goal-tracker-frontend
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer

@@ -1,0 +1,60 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: goal-tracker-ingress
+  namespace: production
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+  - host: goal-tracker.com
+    http:
+      paths:
+      # Main production (90% traffic)
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: goal-tracker-v1-service
+            port:
+              number: 80
+      # Beta version (10% traffic)
+      - path: /beta
+        pathType: Prefix
+        backend:
+          service:
+            name: goal-tracker-v2-service
+            port:
+              number: 80
+      # Admin version (internal)
+      - path: /admin
+        pathType: Prefix
+        backend:
+          service:
+            name: goal-tracker-admin-service
+            port:
+              number: 80
+---
+# Canary deployment with header-based routing
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: goal-tracker-canary
+  namespace: production
+  annotations:
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-by-header: "X-Canary"
+    nginx.ingress.kubernetes.io/canary-by-header-value: "true"
+spec:
+  rules:
+  - host: goal-tracker.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: goal-tracker-v2-service
+            port:
+              number: 80

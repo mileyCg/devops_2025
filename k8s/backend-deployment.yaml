@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goal-tracker-backend
+  # namespace will be set via kubectl -n flag
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: goal-tracker-backend
+  template:
+    metadata:
+      labels:
+        app: goal-tracker-backend
+    spec:
+      containers:
+      - name: backend
+        image: us-docker.pkg.dev/rosy-slate-468308-r5/gcr.io/backend:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "production"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "300m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  # namespace will be set via kubectl -n flag
+spec:
+  selector:
+    app: goal-tracker-backend
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP
