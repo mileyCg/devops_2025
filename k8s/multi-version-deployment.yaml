@@ -1,0 +1,77 @@
+# Version 1.0 (Stable)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goal-tracker-v1
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: goal-tracker
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: goal-tracker
+        version: v1
+    spec:
+      containers:
+      - name: frontend
+        image: gcr.io/PROJECT_ID/goal-tracker-frontend:v1.0.0
+        ports:
+        - containerPort: 80
+---
+# Version 2.0 (New Features)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goal-tracker-v2
+  namespace: production
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: goal-tracker
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: goal-tracker
+        version: v2
+    spec:
+      containers:
+      - name: frontend
+        image: gcr.io/PROJECT_ID/goal-tracker-frontend:v2.0.0
+        ports:
+        - containerPort: 80
+---
+# Service for Version 1 (90% traffic)
+apiVersion: v1
+kind: Service
+metadata:
+  name: goal-tracker-v1-service
+  namespace: production
+spec:
+  selector:
+    app: goal-tracker
+    version: v1
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer
+---
+# Service for Version 2 (10% traffic)
+apiVersion: v1
+kind: Service
+metadata:
+  name: goal-tracker-v2-service
+  namespace: production
+spec:
+  selector:
+    app: goal-tracker
+    version: v2
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer

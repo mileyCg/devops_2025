@@ -5,6 +5,25 @@ on:
     branches: [ main, develop, 'feature/*' ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+      replicas:
+        description: 'Number of replicas'
+        required: false
+        default: '2'
+        type: string
+
+env:
+  REGISTRY: gcr.io
+  IMAGE_NAME: ${{ secrets.GCP_PROJECT_ID }}
 
 jobs:
   test:
@@ -55,9 +74,10 @@ jobs:
         cd frontend
         npm run test
 
-  build-docker:
+  build-and-deploy:
     needs: test
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
     
     steps:
     - name: Checkout code
@@ -66,18 +86,127 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
       
-    - name: Build backend image
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        
+    - name: Configure Docker for GCR
+      run: gcloud auth configure-docker
+      
+    - name: Build and push backend image
       run: |
         cd backend
-        docker build -t goal-tracker-backend:${{ github.sha }} .
+        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-backend:${{ github.sha }} .
+        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-backend:latest .
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-backend:${{ github.sha }}
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-backend:latest
         
-    - name: Build frontend image
+    - name: Build and push frontend image
       run: |
         cd frontend
-        docker build -t goal-tracker-frontend:${{ github.sha }} .
+        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-frontend:${{ github.sha }} .
+        docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-frontend:latest .
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-frontend:${{ github.sha }}
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-frontend:latest
         
-    - name: Test Docker images
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+        
+    - name: Configure kubectl for GKE
       run: |
-        echo "✅ Backend image built successfully"
-        echo "✅ Frontend image built successfully"
-        docker images | grep goal-tracker
+        gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} --zone ${{ secrets.GKE_ZONE }} --project ${{ secrets.GCP_PROJECT_ID }}
+        
+    - name: Determine deployment environment
+      id: env
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          echo "replicas=${{ github.event.inputs.replicas }}" >> $GITHUB_OUTPUT
+        elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          echo "environment=production" >> $GITHUB_OUTPUT
+          echo "replicas=4" >> $GITHUB_OUTPUT
+        elif [ "${{ github.ref }}" = "refs/heads/develop" ] || [[ "${{ github.ref }}" == refs/heads/feature/* ]]; then
+          echo "environment=staging" >> $GITHUB_OUTPUT
+          echo "replicas=2" >> $GITHUB_OUTPUT
+        else
+          echo "environment=development" >> $GITHUB_OUTPUT
+          echo "replicas=1" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Create namespaces
+      run: |
+        kubectl apply -f k8s/namespaces.yaml
+        
+    - name: Deploy to ${{ steps.env.outputs.environment }}
+      run: |
+        ENV="${{ steps.env.outputs.environment }}"
+        REPLICAS="${{ steps.env.outputs.replicas }}"
+        
+        echo "🚀 Deploying to $ENV namespace with $REPLICAS replicas..."
+        
+        # Deploy backend
+        kubectl apply -f k8s/backend-deployment.yaml -n $ENV
+        kubectl set image deployment/goal-tracker-backend backend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-backend:${{ github.sha }} -n $ENV
+        kubectl scale deployment goal-tracker-backend --replicas=$REPLICAS -n $ENV
+        
+        # Deploy frontend
+        kubectl apply -f k8s/frontend-deployment.yaml -n $ENV
+        kubectl set image deployment/goal-tracker-frontend frontend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/goal-tracker-frontend:${{ github.sha }} -n $ENV
+        kubectl scale deployment goal-tracker-frontend --replicas=$REPLICAS -n $ENV
+        
+        # Wait for rollout
+        kubectl rollout status deployment/goal-tracker-backend -n $ENV --timeout=300s
+        kubectl rollout status deployment/goal-tracker-frontend -n $ENV --timeout=300s
+        
+        echo "✅ Deployment to $ENV complete!"
+        
+    - name: Get deployment URLs
+      run: |
+        ENV="${{ steps.env.outputs.environment }}"
+        echo "🔗 Getting URLs for $ENV environment..."
+        
+        # Get backend service info
+        echo "=== Backend Service ==="
+        kubectl get service goal-tracker-backend-service -n $ENV || echo "Backend service not found"
+        
+        # Get frontend service info
+        echo "=== Frontend Service ==="
+        kubectl get service goal-tracker-frontend-service -n $ENV || echo "Frontend service not found"
+        
+        # Get external IP for frontend
+        EXTERNAL_IP=$(kubectl get service goal-tracker-frontend-service -n $ENV -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "")
+        if [ -n "$EXTERNAL_IP" ]; then
+          echo "🌐 Frontend URL: http://$EXTERNAL_IP"
+        else
+          echo "⏳ External IP not ready yet. Check with: kubectl get services -n $ENV"
+        fi
+        
+    - name: Health check
+      run: |
+        ENV="${{ steps.env.outputs.environment }}"
+        echo "🔍 Running health checks..."
+        
+        # Check pod status
+        kubectl get pods -n $ENV
+        
+        # Check if pods are ready
+        READY_PODS=$(kubectl get pods -n $ENV --field-selector=status.phase=Running --no-headers | wc -l)
+        TOTAL_PODS=$(kubectl get pods -n $ENV --no-headers | wc -l)
+        
+        echo "📊 Pod Status: $READY_PODS/$TOTAL_PODS pods running"
+        
+        if [ "$READY_PODS" -eq "$TOTAL_PODS" ] && [ "$TOTAL_PODS" -gt 0 ]; then
+          echo "✅ All pods are healthy!"
+        else
+          echo "⚠️ Some pods may not be ready yet"
+        fi
+        
+    - name: Cleanup old deployments
+      if: steps.env.outputs.environment == 'development'
+      run: |
+        echo "🧹 Cleaning up old development deployments..."
+        # Keep only the last 3 deployments
+        kubectl get deployments -n development --sort-by=.metadata.creationTimestamp -o name | head -n -3 | xargs -r kubectl delete -n development

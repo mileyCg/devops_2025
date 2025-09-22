@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goal-tracker-backend
+  # namespace will be set via kubectl -n flag
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: goal-tracker-backend
+  template:
+    metadata:
+      labels:
+        app: goal-tracker-backend
+    spec:
+      containers:
+      - name: backend
+        image: gcr.io/PROJECT_ID/goal-tracker-backend:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "production"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goal-tracker-backend-service
+  # namespace will be set via kubectl -n flag
+spec:
+  selector:
+    app: goal-tracker-backend
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP
