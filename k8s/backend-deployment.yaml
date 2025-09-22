@@ -5,6 +5,11 @@ metadata:
   # namespace will be set via kubectl -n flag
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: goal-tracker-backend
@@ -21,6 +26,13 @@ spec:
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: "production"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
 ---
 apiVersion: v1
 kind: Service

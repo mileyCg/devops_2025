@@ -5,6 +5,11 @@ metadata:
   # namespace will be set via kubectl -n flag
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: goal-tracker-frontend
@@ -18,6 +23,13 @@ spec:
         image: us-docker.pkg.dev/PROJECT_ID/gcr.io/frontend:latest
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
 ---
 apiVersion: v1
 kind: Service

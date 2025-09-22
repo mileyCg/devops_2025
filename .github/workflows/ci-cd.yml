@@ -199,22 +199,8 @@ jobs:
     - name: Health check
       run: |
         ENV="${{ steps.env.outputs.environment }}"
-        echo "🔍 Running health checks..."
-        
-        # Check pod status
+        echo "🔍 Checking deployment status..."
         kubectl get pods -n $ENV
-        
-        # Check if pods are ready
-        READY_PODS=$(kubectl get pods -n $ENV --field-selector=status.phase=Running --no-headers | wc -l)
-        TOTAL_PODS=$(kubectl get pods -n $ENV --no-headers | wc -l)
-        
-        echo "📊 Pod Status: $READY_PODS/$TOTAL_PODS pods running"
-        
-        if [ "$READY_PODS" -eq "$TOTAL_PODS" ] && [ "$TOTAL_PODS" -gt 0 ]; then
-          echo "✅ All pods are healthy!"
-        else
-          echo "⚠️ Some pods may not be ready yet"
-        fi
         
     - name: Cleanup old deployments
       if: steps.env.outputs.environment == 'development'
