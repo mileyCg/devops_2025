@@ -176,3 +176,5 @@ The application includes Docker configuration for both development and productio
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+<!-- Trigger CI -->
