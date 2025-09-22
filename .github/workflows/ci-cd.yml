@@ -171,6 +171,12 @@ jobs:
         
         # Wait for rollout
         kubectl rollout status deployment/goal-tracker-backend -n $ENV --timeout=300s
+        
+        # Check frontend deployment with debugging
+        echo "🔍 Checking frontend deployment..."
+        kubectl get pods -n $ENV -l app=goal-tracker-frontend
+        kubectl describe pods -n $ENV -l app=goal-tracker-frontend | tail -20
+        
         kubectl rollout status deployment/goal-tracker-frontend -n $ENV --timeout=300s
         
         echo "✅ Deployment to $ENV complete!"
