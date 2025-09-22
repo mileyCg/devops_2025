@@ -162,7 +162,8 @@ jobs:
         # Deploy backend
         kubectl apply -f k8s/backend-deployment.yaml -n $ENV
         kubectl set image deployment/backend backend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.REPOSITORY }}/backend:${{ github.sha }} -n $ENV
-        kubectl scale deployment goal-tracker-backend --replicas=$REPLICAS -n $ENV
+        sleep 5
+        kubectl scale deployment backend --replicas=$REPLICAS -n $ENV
         
         # Deploy frontend
         kubectl apply -f k8s/frontend-deployment.yaml -n $ENV
@@ -196,7 +197,7 @@ jobs:
         
         # Get backend logs too
         echo "📋 Backend container logs:"
-        kubectl logs -n $ENV -l app=goal-tracker-backend --tail=20 || echo "No backend logs available"
+        kubectl logs -n $ENV -l app=backend --tail=20 || echo "No backend logs available"
         
         # Check if there are any events
         echo "📅 Recent events:"
@@ -213,7 +214,7 @@ jobs:
         
         # Get backend service info
         echo "=== Backend Service ==="
-        kubectl get service goal-tracker-backend-service -n $ENV || echo "Backend service not found"
+        kubectl get service backend-service -n $ENV || echo "Backend service not found"
         
         # Get frontend service info
         echo "=== Frontend Service ==="
