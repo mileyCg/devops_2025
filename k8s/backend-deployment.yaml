@@ -4,7 +4,7 @@ metadata:
   name: goal-tracker-backend
   # namespace will be set via kubectl -n flag
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
