@@ -161,7 +161,7 @@ jobs:
         
         # Deploy backend
         kubectl apply -f k8s/backend-deployment.yaml -n $ENV
-        kubectl set image deployment/goal-tracker-backend backend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.REPOSITORY }}/backend:${{ github.sha }} -n $ENV
+        kubectl set image deployment/backend backend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ env.REPOSITORY }}/backend:${{ github.sha }} -n $ENV
         kubectl scale deployment goal-tracker-backend --replicas=$REPLICAS -n $ENV
         
         # Deploy frontend
