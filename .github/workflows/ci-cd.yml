@@ -139,7 +139,7 @@ jobs:
           echo "replicas=${{ github.event.inputs.replicas }}" >> $GITHUB_OUTPUT
         elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
           echo "environment=production" >> $GITHUB_OUTPUT
-          echo "replicas=2" >> $GITHUB_OUTPUT
+          echo "replicas=1" >> $GITHUB_OUTPUT
         elif [ "${{ github.ref }}" = "refs/heads/develop" ] || [[ "${{ github.ref }}" == refs/heads/feature/* ]]; then
           echo "environment=staging" >> $GITHUB_OUTPUT
           echo "replicas=1" >> $GITHUB_OUTPUT
