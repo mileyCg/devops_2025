@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: gcr.io/PROJECT_ID/goal-tracker-backend:latest
+        image: us-docker.pkg.dev/PROJECT_ID/gcr.io/backend:latest
         ports:
         - containerPort: 8080
         env:
