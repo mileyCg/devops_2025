@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: us-docker.pkg.dev/PROJECT_ID/gcr.io/backend:latest
+        image: us-docker.pkg.dev/rosy-slate-468308-r5/gcr.io/backend:latest
         ports:
         - containerPort: 8080
         env:

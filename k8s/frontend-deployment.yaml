@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: us-docker.pkg.dev/PROJECT_ID/gcr.io/frontend:latest
+        image: us-docker.pkg.dev/rosy-slate-468308-r5/gcr.io/frontend:latest
         ports:
         - containerPort: 80
         readinessProbe:
