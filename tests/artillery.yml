@@ -1,0 +1,14 @@
+config:
+  target: "http://34.134.153.6"
+  phases:
+    - duration: 30
+      arrivalRate: 5
+      name: "quick-demo"
+  defaults:
+    headers:
+      Accept: application/json
+scenarios:
+  - name: "GET goals"
+    flow:
+      - get:
+          url: "/api/goals"
