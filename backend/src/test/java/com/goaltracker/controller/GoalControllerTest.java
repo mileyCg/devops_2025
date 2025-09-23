@@ -48,4 +48,12 @@ class GoalControllerTest {
                 .andExpect(jsonPath("$[0].id", is(1)))
                 .andExpect(jsonPath("$[0].title", is("T")));
     }
+
+    @Test
+    void healthEndpoint_returnsCorrectMessage() throws Exception {
+        // This test now passes with correct expected content
+        mockMvc.perform(get("/api/goals/health"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Backend is running!"));
+    }
 }
