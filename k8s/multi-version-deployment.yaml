@@ -16,6 +16,7 @@ spec:
         app: goal-tracker
         version: v1
     spec:
+      serviceAccountName: goal-tracker-ksa
       containers:
       - name: frontend
         image: gcr.io/PROJECT_ID/goal-tracker-frontend:v1.0.0
@@ -40,6 +41,7 @@ spec:
         app: goal-tracker
         version: v2
     spec:
+      serviceAccountName: goal-tracker-ksa
       containers:
       - name: frontend
         image: gcr.io/PROJECT_ID/goal-tracker-frontend:v2.0.0

@@ -18,6 +18,7 @@ spec:
       labels:
         app: goal-tracker-frontend
     spec:
+      serviceAccountName: goal-tracker-ksa
       containers:
       - name: frontend
         image: us-docker.pkg.dev/rosy-slate-468308-r5/gcr.io/frontend:latest
