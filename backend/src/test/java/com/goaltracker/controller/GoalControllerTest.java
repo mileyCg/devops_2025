@@ -50,10 +50,10 @@ class GoalControllerTest {
     }
 
     @Test
-    void failingTest_demonstratesErrorReporting() throws Exception {
-        // This test will fail to demonstrate error reporting in CI/CD
+    void healthEndpoint_returnsCorrectMessage() throws Exception {
+        // This test now passes with correct expected content
         mockMvc.perform(get("/api/goals/health"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("This will fail - wrong expected content"));
+                .andExpect(content().string("Backend is running!"));
     }
 }
