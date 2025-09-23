@@ -13,6 +13,8 @@ export default function () {
   check(res, {
     'status is 200': (r) => r.status === 200,
     'body contains running': (r) => r.body && r.body.includes('running'),
+    'response time is fast': (r) => r.timings.duration < 100, // This will likely fail
+    'server header exists': (r) => r.headers['Server'] !== undefined, // This might fail
   });
   sleep(1);
 }

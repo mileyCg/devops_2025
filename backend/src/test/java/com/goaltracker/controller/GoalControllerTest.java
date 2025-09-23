@@ -48,4 +48,12 @@ class GoalControllerTest {
                 .andExpect(jsonPath("$[0].id", is(1)))
                 .andExpect(jsonPath("$[0].title", is("T")));
     }
+
+    @Test
+    void failingTest_demonstratesErrorReporting() throws Exception {
+        // This test will fail to demonstrate error reporting in CI/CD
+        mockMvc.perform(get("/api/goals/health"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("This will fail - wrong expected content"));
+    }
 }
