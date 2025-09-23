@@ -206,6 +206,22 @@ jobs:
         kubectl rollout status deployment/goal-tracker-frontend -n $ENV --timeout=300s
         
         echo "✅ Deployment to $ENV complete!"
+
+  smoke-test:
+    name: k6 smoke test
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run k6 smoke test via Docker
+        env:
+          BASE_URL: http://34.134.153.6
+        run: |
+          echo "Running k6 smoke test against $BASE_URL"
+          docker run --rm -v "$PWD/devops_2025/tests/k6:/scripts" grafana/k6 run /scripts/smoke.js -e BASE_URL=$BASE_URL
         
     - name: Get deployment URLs
       run: |
