@@ -18,7 +18,7 @@ spec:
       labels:
         app: backend
     spec:
-      serviceAccountName: goal-tracker-ksa
+      serviceAccountName: goal-tracker-sa
       containers:
       - name: backend
         image: us-docker.pkg.dev/rosy-slate-468308-r5/gcr.io/backend:latest
