@@ -250,9 +250,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Verify k6 script path
+        run: |
+          echo "Workspace: ${{ github.workspace }}"
+          ls -la "${{ github.workspace }}/devops_2025/tests/k6" || true
+
       - name: Run k6 smoke test via Docker
         env:
           BASE_URL: http://34.134.153.6
         run: |
           echo "Running k6 smoke test against $BASE_URL"
-          docker run --rm -v "$PWD/devops_2025/tests/k6:/scripts" grafana/k6 run /scripts/smoke.js -e BASE_URL=$BASE_URL
+          docker run --rm -v "${{ github.workspace }}/devops_2025/tests/k6:/scripts" grafana/k6 run /scripts/smoke.js -e BASE_URL=$BASE_URL
