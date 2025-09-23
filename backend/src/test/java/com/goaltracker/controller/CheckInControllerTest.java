@@ -43,5 +43,3 @@ class CheckInControllerTest {
                 .andExpect(jsonPath("$[0].goalId", is(1)));
     }
 }
-
-

@@ -49,5 +49,3 @@ class GoalControllerTest {
                 .andExpect(jsonPath("$[0].title", is("T")));
     }
 }
-
-
